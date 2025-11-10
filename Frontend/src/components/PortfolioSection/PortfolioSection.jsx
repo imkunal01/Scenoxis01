@@ -166,11 +166,91 @@ const PortfolioSection = () => {
                   layout
                 >
                   <div className="portfolio-section__project-image">
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      loading="lazy"
-                    />
+                    {/* Video Player for Video Editing Projects */}
+                    {project.category === 'video' && (
+                      <div className="portfolio-section__video-container">
+                        {/* TODO: Replace video source with your actual video files */}
+                        <video
+                          className="portfolio-section__project-video"
+                          controls
+                          poster={project.image}
+                          aria-label={`${project.title} video preview`}
+                        >
+                          {/* Add your video sources here - MP4 and WebM formats supported */}
+                          <source src="/videos/sample-video.mp4" type="video/mp4" />
+                          <source src="/videos/sample-video.webm" type="video/webm" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    )}
+
+                    {/* Image Gallery for Design Projects */}
+                    {project.category === 'design' && (
+                      <div className="portfolio-section__image-gallery">
+                        {/* TODO: Replace with your actual design images */}
+                        <img 
+                          src={project.image} 
+                          alt={`${project.title} - Main design showcase`}
+                          className="portfolio-section__project-main-image"
+                          loading="lazy"
+                        />
+                        <div className="portfolio-section__image-grid">
+                          {/* Additional image placeholders for design gallery */}
+                          <div 
+                            className="portfolio-section__gallery-image"
+                            style={{ background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)' }}
+                            aria-label="Design showcase image 1 - Replace with your design work"
+                          />
+                          <div 
+                            className="portfolio-section__gallery-image"
+                            style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' }}
+                            aria-label="Design showcase image 2 - Replace with your design work"
+                          />
+                          <div 
+                            className="portfolio-section__gallery-image"
+                            style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)' }}
+                            aria-label="Design showcase image 3 - Replace with your design work"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Website Preview for Web Development Projects */}
+                    {project.category === 'web' && (
+                      <div className="portfolio-section__website-preview">
+                        {/* Browser frame mockup */}
+                        <div className="portfolio-section__browser-frame">
+                          <div className="portfolio-section__browser-header">
+                            <div className="portfolio-section__browser-dots">
+                              <span className="portfolio-section__browser-dot portfolio-section__browser-dot--red"></span>
+                              <span className="portfolio-section__browser-dot portfolio-section__browser-dot--yellow"></span>
+                              <span className="portfolio-section__browser-dot portfolio-section__browser-dot--green"></span>
+                            </div>
+                            <div className="portfolio-section__browser-address-bar">
+                              {/* TODO: Replace with your actual website URL or use static image */}
+                              <span>your-website-url.com</span>
+                            </div>
+                          </div>
+                          <div className="portfolio-section__browser-content">
+                            {/* TODO: Replace with your actual website screenshot or live preview */}
+                            <img 
+                              src={project.image} 
+                              alt={`${project.title} - Website preview`}
+                              className="portfolio-section__website-screenshot"
+                              loading="lazy"
+                            />
+                            {/* Alternative: Use iframe for live preview (uncomment below and comment out img above) */}
+                            {/* <iframe 
+                              src="https://your-website-url.com" 
+                              className="portfolio-section__website-iframe"
+                              title={`${project.title} live preview`}
+                              loading="lazy"
+                            ></iframe> */}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="portfolio-section__project-overlay">
                       <div className="portfolio-section__project-overlay-content">
                         <h3 className="portfolio-section__project-title">
@@ -194,6 +274,7 @@ const PortfolioSection = () => {
                             className="portfolio-section__project-button"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
+                            aria-label={`View ${project.title} project details`}
                           >
                             View Project
                           </motion.button>

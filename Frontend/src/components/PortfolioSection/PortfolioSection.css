@@ -365,6 +365,200 @@
   }
 }
 
+/* Video Player Styles */
+.portfolio-section__video-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.portfolio-section__project-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.portfolio-section__project-video::-webkit-media-controls {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* Image Gallery Styles */
+.portfolio-section__image-gallery {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.portfolio-section__project-main-image {
+  width: 100%;
+  height: 70%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.portfolio-section__image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+  height: 30%;
+  padding: var(--space-xs);
+  background: var(--card-bg);
+}
+
+.portfolio-section__gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-normal);
+}
+
+.portfolio-section__gallery-image:hover {
+  transform: scale(1.05);
+}
+
+/* Website Preview Styles */
+.portfolio-section__website-preview {
+  width: 100%;
+  height: 100%;
+  padding: var(--space-sm);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+}
+
+.portfolio-section__browser-frame {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio-section__browser-header {
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  gap: var(--space-md);
+}
+
+.portfolio-section__browser-dots {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.portfolio-section__browser-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+}
+
+.portfolio-section__browser-dot--red {
+  background: #ff5f57;
+}
+
+.portfolio-section__browser-dot--yellow {
+  background: #ffbd2e;
+}
+
+.portfolio-section__browser-dot--green {
+  background: #28ca42;
+}
+
+.portfolio-section__browser-address-bar {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: #666;
+  min-width: 0;
+}
+
+.portfolio-section__browser-content {
+  flex: 1;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.portfolio-section__website-screenshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portfolio-section__website-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+/* Hover effects for media components */
+.portfolio-section__project:hover .portfolio-section__project-main-image {
+  transform: scale(1.05);
+}
+
+.portfolio-section__project:hover .portfolio-section__project-video {
+  transform: scale(1.02);
+}
+
+.portfolio-section__project:hover .portfolio-section__website-screenshot {
+  transform: scale(1.02);
+}
+
+/* Responsive adjustments for media components */
+@media (max-width: 768px) {
+  .portfolio-section__image-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .portfolio-section__browser-header {
+    padding: var(--space-xs);
+  }
+  
+  .portfolio-section__browser-dot {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .portfolio-section__browser-address-bar {
+    font-size: var(--font-size-xs);
+    padding: var(--space-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-section__image-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .portfolio-section__website-preview {
+    padding: var(--space-xs);
+  }
+  
+  .portfolio-section__browser-header {
+    gap: var(--space-sm);
+  }
+  
+  .portfolio-section__browser-dots {
+    gap: var(--space-xs);
+  }
+}
+
 /* Theme transition */
 .portfolio-section__project {
   transition: all var(--transition-slow);

@@ -2,12 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Aurora from '../Aurora';
 import './HeroSection.css';
-
+import image1 from '../../assets/ui611.png';
 const HeroSection = () => {
-  const scrollToServices = () => {
-    const servicesSection = document.querySelector('#services');
-    if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
+  const scrollToContact = () => {
+    const contactSection = document.querySelector('#contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -135,8 +135,8 @@ const HeroSection = () => {
               className="hero-section__actions"
               variants={buttonVariants}
             >
-              <button className="hero-section__cta-primary" onClick={scrollToServices}>
-                Lets Build Together
+              <button className="hero-section__cta-primary" onClick={scrollToContact} aria-label="Get started - scroll to contact form">
+                Get Started
               </button>
               
               <button className="hero-section__cta-secondary" onClick={() => document.querySelector('#portfolio')?.scrollIntoView({ behavior: 'smooth' })}>
@@ -157,57 +157,62 @@ const HeroSection = () => {
           >
             {/* Main Image Grid */}
             <div className="hero-section__image-grid">
-              {/* Top Left Image */}
+              {/* Top Left Image - Image Placeholder */}
               <motion.div
                 className="hero-section__image hero-section__image--1"
                 variants={titleVariants}
                 whileHover={{ scale: 1.05 }}
               >
                 <div className="hero-section__image-placeholder">
-                  <div className="hero-section__person-avatar">
-                    <div className="hero-section__person-head"></div>
-                    <div className="hero-section__person-body"></div>
-                  </div>
+                  {/* TODO: Replace with actual image - Recommended: 400x300px, 16:9 aspect ratio */}
+                  <div 
+                    className="hero-section__placeholder-image"
+                    style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+                  />
                 </div>
                 <div className="hero-section__logo-overlay hero-section__logo-overlay--slack">
-                  <span>S</span>
+                  <span>CLEAN & SIMPLE</span>
                 </div>
               </motion.div>
 
-              {/* Main Center Image */}
+              {/* Main Center Image - Image Placeholder */}
               <motion.div
                 className="hero-section__image hero-section__image--2"
                 variants={subtitleVariants}
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="hero-section__image-placeholder hero-section__image-placeholder--family">
-                  <div className="hero-section__family-group">
-                    <div className="hero-section__person hero-section__person--parent"></div>
-                    <div className="hero-section__person hero-section__person--child"></div>
-                  </div>
+                <div className="hero-section__image-placeholder">
+                  {/* TODO: Replace with actual image - Recommended: 600x400px, 3:2 aspect ratio */}
+                  <img 
+                    src={image1} 
+                    alt="Hero showcase image 2 - Replace with your main brand imagery"
+                    className="hero-section__placeholder-image"
+                    loading="lazy"
+                  />
                 </div>
                 <div className="hero-section__logo-overlay hero-section__logo-overlay--slack">
-                  <span>Slack</span>
+                  <span>KEEN DESIGN</span>
                 </div>
                 <div className="hero-section__logo-overlay hero-section__logo-overlay--mandiri">
-                  <span>Mandiri</span>
+                  <span>UI/UX</span>
                 </div>
                 <div className="hero-section__logo-overlay hero-section__logo-overlay--boxes">
                   <div className="hero-section__boxes-icon"></div>
                 </div>
               </motion.div>
 
-              {/* Bottom Left Image */}
+              {/* Bottom Left Image - Image Placeholder */}
               <motion.div
                 className="hero-section__image hero-section__image--3"
                 variants={buttonVariants}
                 whileHover={{ scale: 1.05 }}
               >
                 <div className="hero-section__image-placeholder">
-                  <div className="hero-section__person-avatar">
-                    <div className="hero-section__person-head"></div>
-                    <div className="hero-section__person-body"></div>
-                  </div>
+                  {/* TODO: Replace with actual image - Recommended: 400x300px, 4:3 aspect ratio */}
+                  <div 
+                    className="hero-section__placeholder-image"
+                    style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}
+                  />
                 </div>
                 <div className="hero-section__logo-overlay hero-section__logo-overlay--security">
                   <svg viewBox="0 0 24 24" fill="none">

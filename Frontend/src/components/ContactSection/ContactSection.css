@@ -177,7 +177,7 @@
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   font-size: var(--font-size-base);
-  color: var(--text);
+  color: white;
   transition: all var(--transition-normal);
   backdrop-filter: var(--glass-backdrop);
   -webkit-backdrop-filter: var(--glass-backdrop);
@@ -187,12 +187,12 @@
 .contact-section__form-select:focus,
 .contact-section__form-textarea:focus {
   border: #181818;
-  color: #181818;
+  color: #302f2f;
 }
 
 .contact-section__form-input::placeholder,
 .contact-section__form-textarea::placeholder {
-  color: var(--text);
+  color: white;
   opacity: 0.5;
 }
 
