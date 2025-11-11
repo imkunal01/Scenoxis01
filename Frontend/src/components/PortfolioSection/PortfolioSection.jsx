@@ -28,7 +28,7 @@ const PortfolioSection = () => {
       description: 'Modern admin dashboard with real-time analytics',
       tags: ['React', 'Dashboard', 'Analytics'],
       year: '2024',
-      url: 'https://example.com/techflow'
+      url: 'https://my-portfolio-two-cyan-79.vercel.app/'
     },
     {
       id: 3,
@@ -42,13 +42,13 @@ const PortfolioSection = () => {
     },
     {
       id: 4,
-      title: 'Artisan Coffee Website',
+      title: 'Mc Donalds',
       category: 'web',
       image: '/api/placeholder/400/300',
       description: 'E-commerce website for premium coffee brand',
       tags: ['E-commerce', 'Responsive', 'SEO'],
       year: '2023',
-      url: 'https://example.com/artisan-coffee'
+      url: 'https://petv-88-g8qr.vercel.app/'
     },
     {
       id: 5,

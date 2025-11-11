@@ -11,6 +11,8 @@ const allowedOrigins = [
   "https://scenoxis01.vercel.app",
   "https://scenoxis01-1.onrender.com",
   "http://localhost:5173",
+  "http://localhost:5000",
+  "http://localhost:3000",
   "http://localhost:5174"
 ];
 
@@ -44,15 +46,20 @@ const contactSchema = new mongoose.Schema({
 });
 const Contact = mongoose.model("Contact", contactSchema);
 
-// Setup mail transporter with better error handling
+// Setup mail transporter with explicit Gmail SMTP settings
+// Also sanitize app password by removing any spaces rendered by Google UI
+const OWNER_PASS = (process.env.OWNER_PASS || "").replace(/\s+/g, "");
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // use TLS
   auth: {
     user: process.env.OWNER_EMAIL,
-    pass: process.env.OWNER_PASS,
+    pass: OWNER_PASS,
   },
-  debug: true, // Enable debug output
-  logger: true  // Enable logging
+  pool: true, // reuse connection for multiple emails
+  debug: true,
+  logger: true,
 });
 
 // Test transporter connection
@@ -61,7 +68,7 @@ transporter.verify(function (error, success) {
     console.log("❌ Email transporter verification failed:", error);
     console.log("Email config:", {
       email: process.env.OWNER_EMAIL ? "Set" : "Not set",
-      pass: process.env.OWNER_PASS ? "Set" : "Not set"
+      pass: OWNER_PASS ? `Set (len=${OWNER_PASS.length})` : "Not set",
     });
   } else {
     console.log("✅ Email server is ready to send messages");
