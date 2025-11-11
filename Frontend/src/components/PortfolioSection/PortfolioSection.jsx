@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
-import BackgroundEffects from '../BackgroundEffects';
 import GradualBlur from '../GradualBlur';
 import './PortfolioSection.css';
 
@@ -17,7 +16,9 @@ const PortfolioSection = () => {
       image: '/api/placeholder/400/300',
       description: 'Complete brand identity design for sustainable energy company',
       tags: ['Branding', 'Logo Design', 'UI/UX'],
-      year: '2024'
+      year: '2024',
+      behanceUrl: 'https://www.behance.net/embed/project/238365077?ilo0=1',
+      behanceEmbedSrc: 'https://www.behance.net/embed/project/238365077?ilo0=1'
     },
     {
       id: 2,
@@ -26,7 +27,8 @@ const PortfolioSection = () => {
       image: '/api/placeholder/400/300',
       description: 'Modern admin dashboard with real-time analytics',
       tags: ['React', 'Dashboard', 'Analytics'],
-      year: '2024'
+      year: '2024',
+      url: 'https://example.com/techflow'
     },
     {
       id: 3,
@@ -35,7 +37,8 @@ const PortfolioSection = () => {
       image: '/api/placeholder/400/300',
       description: 'High-end product launch video with motion graphics',
       tags: ['Video Editing', 'Motion Graphics', 'Color Grading'],
-      year: '2024'
+      year: '2024',
+      youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 4,
@@ -44,7 +47,8 @@ const PortfolioSection = () => {
       image: '/api/placeholder/400/300',
       description: 'E-commerce website for premium coffee brand',
       tags: ['E-commerce', 'Responsive', 'SEO'],
-      year: '2023'
+      year: '2023',
+      url: 'https://example.com/artisan-coffee'
     },
     {
       id: 5,
@@ -53,7 +57,8 @@ const PortfolioSection = () => {
       image: '/api/placeholder/400/300',
       description: 'Fashion week promotional video series',
       tags: ['Video Production', 'Fashion', 'Social Media'],
-      year: '2023'
+      year: '2023',
+      youtubeUrl: 'https://www.youtube.com/embed/oHg5SJYRHA0'
     },
     {
       id: 6,
@@ -62,7 +67,9 @@ const PortfolioSection = () => {
       image: '/api/placeholder/400/300',
       description: 'Mobile app UI/UX design for productivity tool',
       tags: ['Mobile App', 'UI/UX', 'Prototyping'],
-      year: '2023'
+      year: '2023',
+      figmaUrl: 'https://www.figma.com/design/3X4LDeFadKoiCbNQU0fZ9h/Untitled?node-id=0-1&m=dev&t=dIBXPi3LCnVqR4i6-1',
+      figmaEmbedSrc: 'https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fdesign%2F3X4LDeFadKoiCbNQU0fZ9h%2FUntitled%3Fnode-id%3D0-1%26m%3Ddev%26t%3DdIBXPi3LCnVqR4i6-1'
     }
   ];
 
@@ -157,62 +164,84 @@ const PortfolioSection = () => {
               {filteredProjects.map((project) => (
                 <motion.div
                   key={project.id}
-                  className="portfolio-section__project"
+                  className={`portfolio-section__project portfolio-section__project--${project.category}`}
                   variants={itemVariants}
-                  whileHover={{ 
-                    y: -10,
-                    transition: { duration: 0.3 }
-                  }}
+                  whileHover={project.category === 'web' ? { y: -10, transition: { duration: 0.3 } } : undefined}
                   layout
                 >
                   <div className="portfolio-section__project-image">
                     {/* Video Player for Video Editing Projects */}
                     {project.category === 'video' && (
                       <div className="portfolio-section__video-container">
-                        {/* TODO: Replace video source with your actual video files */}
-                        <video
+                        <iframe
                           className="portfolio-section__project-video"
-                          controls
-                          poster={project.image}
-                          aria-label={`${project.title} video preview`}
-                        >
-                          {/* Add your video sources here - MP4 and WebM formats supported */}
-                          <source src="/videos/sample-video.mp4" type="video/mp4" />
-                          <source src="/videos/sample-video.webm" type="video/webm" />
-                          Your browser does not support the video tag.
-                        </video>
+                          src={project.youtubeUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ'}
+                          title={`${project.title} YouTube video`}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
                       </div>
                     )}
 
-                    {/* Image Gallery for Design Projects */}
+                    {/* Design Projects: Behance or Figma embed (if provided) or image gallery */}
                     {project.category === 'design' && (
-                      <div className="portfolio-section__image-gallery">
-                        {/* TODO: Replace with your actual design images */}
-                        <img 
-                          src={project.image} 
-                          alt={`${project.title} - Main design showcase`}
-                          className="portfolio-section__project-main-image"
-                          loading="lazy"
-                        />
-                        <div className="portfolio-section__image-grid">
-                          {/* Additional image placeholders for design gallery */}
-                          <div 
-                            className="portfolio-section__gallery-image"
-                            style={{ background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)' }}
-                            aria-label="Design showcase image 1 - Replace with your design work"
-                          />
-                          <div 
-                            className="portfolio-section__gallery-image"
-                            style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' }}
-                            aria-label="Design showcase image 2 - Replace with your design work"
-                          />
-                          <div 
-                            className="portfolio-section__gallery-image"
-                            style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)' }}
-                            aria-label="Design showcase image 3 - Replace with your design work"
+                      project.behanceEmbedSrc ? (
+                        <div className="portfolio-section__design-embed">
+                          <iframe
+                            className="portfolio-section__project-embed"
+                            src={project.behanceEmbedSrc}
+                            height="316"
+                            width="404"
+                            allowFullScreen
+                            loading="lazy"
+                            frameBorder="0"
+                            allow="clipboard-write"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            title={`${project.title} Behance embed`}
                           />
                         </div>
-                      </div>
+                      ) : project.figmaEmbedSrc ? (
+                        <div className="portfolio-section__design-embed">
+                          <iframe
+                            className="portfolio-section__project-embed"
+                            src={project.figmaEmbedSrc}
+                            allowFullScreen
+                            loading="lazy"
+                            frameBorder="0"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            title={`${project.title} Figma embed`}
+                          />
+                        </div>
+                      ) : (
+                        <div className="portfolio-section__image-gallery">
+                          {/* TODO: Replace with your actual design images */}
+                          <img 
+                            src={project.image} 
+                            alt={`${project.title} - Main design showcase`}
+                            className="portfolio-section__project-main-image"
+                            loading="lazy"
+                          />
+                          <div className="portfolio-section__image-grid">
+                            {/* Additional image placeholders for design gallery */}
+                            <div 
+                              className="portfolio-section__gallery-image"
+                              style={{ background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)' }}
+                              aria-label="Design showcase image 1 - Replace with your design work"
+                            />
+                            <div 
+                              className="portfolio-section__gallery-image"
+                              style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' }}
+                              aria-label="Design showcase image 2 - Replace with your design work"
+                            />
+                            <div 
+                              className="portfolio-section__gallery-image"
+                              style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)' }}
+                              aria-label="Design showcase image 3 - Replace with your design work"
+                            />
+                          </div>
+                        </div>
+                      )
                     )}
 
                     {/* Website Preview for Web Development Projects */}
@@ -228,7 +257,7 @@ const PortfolioSection = () => {
                             </div>
                             <div className="portfolio-section__browser-address-bar">
                               {/* TODO: Replace with your actual website URL or use static image */}
-                              <span>your-website-url.com</span>
+                              <span>{project.url || 'your-website-url.com'}</span>
                             </div>
                           </div>
                           <div className="portfolio-section__browser-content">
@@ -251,36 +280,50 @@ const PortfolioSection = () => {
                       </div>
                     )}
 
-                    <div className="portfolio-section__project-overlay">
-                      <div className="portfolio-section__project-overlay-content">
-                        <h3 className="portfolio-section__project-title">
-                          {project.title}
-                        </h3>
-                        <p className="portfolio-section__project-description">
-                          {project.description}
-                        </p>
-                        <div className="portfolio-section__project-tags">
-                          {project.tags.map((tag, index) => (
-                            <span 
-                              key={index}
-                              className="portfolio-section__project-tag"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="portfolio-section__project-actions">
-                          <motion.button
-                            className="portfolio-section__project-button"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            aria-label={`View ${project.title} project details`}
-                          >
-                            View Project
-                          </motion.button>
+                    {project.category === 'web' && (
+                      <div className="portfolio-section__project-overlay">
+                        <div className="portfolio-section__project-overlay-content">
+                          <h3 className="portfolio-section__project-title">
+                            {project.title}
+                          </h3>
+                          <p className="portfolio-section__project-description">
+                            {project.description}
+                          </p>
+                          <div className="portfolio-section__project-tags">
+                            {project.tags.map((tag, index) => (
+                              <span 
+                                key={index}
+                                className="portfolio-section__project-tag"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="portfolio-section__project-actions">
+                            {project.category === 'web' && project.url ? (
+                              <motion.button
+                                className="portfolio-section__project-button"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                aria-label={`Visit ${project.title} website`}
+                                onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
+                              >
+                                Visit Website
+                              </motion.button>
+                            ) : (
+                              <motion.button
+                                className="portfolio-section__project-button"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                aria-label={`View ${project.title} project details`}
+                              >
+                                View Project
+                              </motion.button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   <div className="portfolio-section__project-info">
                     <div className="portfolio-section__project-meta">
@@ -289,6 +332,56 @@ const PortfolioSection = () => {
                         {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
                       </span>
                     </div>
+                    {project.category === 'design' && (
+                      <div style={{ marginTop: 'var(--space-md)' }}>
+                        <h3 className="portfolio-section__project-title">{project.title}</h3>
+                        <p className="portfolio-section__project-description">{project.description}</p>
+                        <div className="portfolio-section__project-tags">
+                          {project.tags.map((tag, index) => (
+                            <span key={index} className="portfolio-section__project-tag">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {project.category === 'web' && project.url && (
+                      <div className="portfolio-section__project-actions" style={{ marginTop: 'var(--space-md)' }}>
+                        <motion.button
+                          className="portfolio-section__project-button"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          aria-label={`Visit ${project.title} website`}
+                          onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
+                        >
+                          Visit Website
+                        </motion.button>
+                      </div>
+                    )}
+                    {project.category === 'design' && (project.behanceUrl || project.figmaUrl) && (
+                      <div className="portfolio-section__project-actions" style={{ marginTop: 'var(--space-md)' }}>
+                        {project.behanceUrl && (
+                          <motion.button
+                            className="portfolio-section__project-button"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label={`View ${project.title} on Behance`}
+                            onClick={() => window.open(project.behanceUrl, '_blank', 'noopener,noreferrer')}
+                          >
+                            View on Behance
+                          </motion.button>
+                        )}
+                        {project.figmaUrl && (
+                          <motion.button
+                            className="portfolio-section__project-button"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label={`View ${project.title} on Figma`}
+                            onClick={() => window.open(project.figmaUrl, '_blank', 'noopener,noreferrer')}
+                          >
+                            View on Figma
+                          </motion.button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}

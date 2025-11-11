@@ -298,3 +298,17 @@
     font-size: 15px;
   }
 }
+
+/* Mobile performance: reduce expensive blur on very small screens */
+@media (max-width: 480px) {
+  .card-nav {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+  .nav-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+}

@@ -164,6 +164,7 @@
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   box-shadow: var(--glass-shadow);
   overflow: hidden;
+  z-index: 1031; /* Above overlay */
 }
 
 .navbar__mobile-menu-item {
@@ -237,4 +238,21 @@
 
 .navbar__menu-item {
   transition: all var(--transition-slow);
+}
+
+/* Full-screen overlay when mobile menu is open */
+.navbar__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1020; /* Below navbar (1030), above page content */
+}
+
+@media (max-width: 480px) {
+  .navbar__overlay {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 }

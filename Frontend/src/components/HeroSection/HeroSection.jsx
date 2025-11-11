@@ -82,9 +82,9 @@ const HeroSection = () => {
 
   return (
     <section id="home" className="hero-section">
-      {/* Aurora Background */}
+      {/* Aurora Background - always enabled, blue + violet palette */}
       <Aurora
-        colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
+        colorStops={["#3A29FF", "#8A2BE2", "#3A29FF"]}
         blend={0.5}
         amplitude={1.0}
         speed={0.5}

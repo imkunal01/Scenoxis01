@@ -25,6 +25,18 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
     if (element) {
@@ -143,6 +155,21 @@ const Navbar = () => {
               </motion.button>
             ))}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Blur overlay behind navbar content; clicking closes the menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="navbar__overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
         )}
       </AnimatePresence>
     </motion.nav>

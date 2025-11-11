@@ -567,3 +567,37 @@
 .portfolio-section__filter {
   transition: all var(--transition-slow);
 }
+/* Design embed styles (Behance iframe) */
+.portfolio-section__design-embed {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.portfolio-section__project-embed {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+/* Disable hover and overlay for video projects to prevent player issues */
+.portfolio-section__project--video:hover .portfolio-section__project-video {
+  transform: none;
+}
+.portfolio-section__project--video .portfolio-section__project-overlay {
+  display: none;
+}
+
+/* Disable hover effects and overlay for design projects */
+.portfolio-section__project--design:hover .portfolio-section__project-image img {
+  transform: none;
+}
+.portfolio-section__project--design:hover .portfolio-section__gallery-image {
+  transform: none;
+}
+.portfolio-section__project--design .portfolio-section__project-overlay {
+  display: none;
+}

@@ -447,6 +447,8 @@
 @media (max-width: 768px) {
   .hero-section {
     padding: 1rem 0;
+    /* Prevent overlap with fixed navbar on small screens */
+    padding-top: 4.5rem;
     min-height: 100vh;
   }
   
@@ -529,6 +531,8 @@
 @media (max-width: 480px) {
   .hero-section {
     padding: 0.5rem 0;
+    /* Prevent overlap with fixed navbar on very small screens (iPhone SE) */
+    padding-top: 4.5rem;
   }
   
   .hero-section__container {

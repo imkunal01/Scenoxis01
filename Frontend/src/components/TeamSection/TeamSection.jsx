@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
-import BackgroundEffects from '../BackgroundEffects';
 import './TeamSection.css';
 
 const TeamSection = () => {

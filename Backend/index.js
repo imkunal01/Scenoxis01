@@ -44,13 +44,28 @@ const contactSchema = new mongoose.Schema({
 });
 const Contact = mongoose.model("Contact", contactSchema);
 
-// Setup mail transporter
+// Setup mail transporter with better error handling
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.OWNER_EMAIL,
     pass: process.env.OWNER_PASS,
   },
+  debug: true, // Enable debug output
+  logger: true  // Enable logging
+});
+
+// Test transporter connection
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("❌ Email transporter verification failed:", error);
+    console.log("Email config:", {
+      email: process.env.OWNER_EMAIL ? "Set" : "Not set",
+      pass: process.env.OWNER_PASS ? "Set" : "Not set"
+    });
+  } else {
+    console.log("✅ Email server is ready to send messages");
+  }
 });
 
 // POST route
@@ -65,15 +80,18 @@ app.post("/api/contact", async (req, res) => {
     await contact.save();
 
     // 📩 Send notification email to YOU
-    await transporter.sendMail({
+    console.log('📧 Sending notification email to owner...');
+    const ownerMailResult = await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.OWNER_EMAIL}>`,
       to: process.env.OWNER_EMAIL,
       subject: `New Message from ${name}`,
       text: `You got a new message:\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
     });
+    console.log('✅ Owner notification sent:', ownerMailResult.messageId);
 
     // 📤 Send custom thank-you email to USER
-    await transporter.sendMail({
+    console.log('📧 Sending confirmation email to user...');
+    const userMailResult = await transporter.sendMail({
       from: `"Kunal's Portfolio" <${process.env.OWNER_EMAIL}>`,
       to: email,
       subject: "Thanks for reaching out! 🙌",
@@ -140,13 +158,60 @@ app.post("/api/contact", async (req, res) => {
   </div>
 `,
     });
+    console.log('✅ User confirmation sent:', userMailResult.messageId);
 
     res
       .status(200)
       .json({ success: true, message: "Message sent successfully!" });
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).json({ error: "Server error, try again later." });
+    console.error("❌ Contact form error:", err);
+    console.error("Error name:", err.name);
+    console.error("Error message:", err.message);
+    if (err.code) console.error("Error code:", err.code);
+    if (err.response) console.error("Error response:", err.response);
+    
+    res.status(500).json({ 
+      error: "Server error, try again later.", 
+      details: err.message,
+      type: err.name 
+    });
+  }
+});
+
+// Test email endpoint for debugging
+app.get("/api/test-email", async (req, res) => {
+  try {
+    console.log("🧪 Testing email functionality...");
+    console.log("📧 Email config check:");
+    console.log("  - OWNER_EMAIL:", process.env.OWNER_EMAIL ? "Set" : "Not set");
+    console.log("  - OWNER_PASS:", process.env.OWNER_PASS ? "Set" : "Not set");
+    
+    // Test notification email
+    console.log("📤 Attempting to send test email...");
+    const result = await transporter.sendMail({
+      from: `"Test Contact" <${process.env.OWNER_EMAIL}>`,
+      to: process.env.OWNER_EMAIL,
+      subject: `Test Email from Backend`,
+      text: `This is a test email to verify email functionality is working.\n\nTime: ${new Date().toISOString()}\nBackend: ${process.env.PORT || 5000}`,
+    });
+    
+    console.log("✅ Test email sent successfully!");
+    console.log("📧 Message ID:", result.messageId);
+    res.json({ success: true, message: "Test email sent successfully", messageId: result.messageId });
+  } catch (error) {
+    console.error("❌ Test email failed:", error);
+    console.error("📋 Error details:");
+    console.error("  - Name:", error.name);
+    console.error("  - Message:", error.message);
+    console.error("  - Code:", error.code);
+    console.error("  - Response:", error.response);
+    res.status(500).json({ 
+      success: false, 
+      error: "Test email failed", 
+      details: error.message,
+      name: error.name,
+      code: error.code
+    });
   }
 });
 
