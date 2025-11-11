@@ -187,7 +187,7 @@
 .contact-section__form-select:focus,
 .contact-section__form-textarea:focus {
   border: #181818;
-  color: #302f2f;
+  color: #ffffff;
 }
 
 .contact-section__form-input::placeholder,

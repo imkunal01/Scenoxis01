@@ -84,7 +84,7 @@ const ContactSection = () => {
     {
       icon: '📧',
       title: 'Email',
-      value: 'hello@scenoxis.com',
+      value: 'scenoxis@gmail.com',
       description: 'Send us an email anytime'
     },
     {
