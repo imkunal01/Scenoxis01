@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import BackgroundEffects from '../BackgroundEffects';
-import GlowButton from '../GlowButton';
+// We will style the button directly in CSS to match the specific form aesthetic, 
+// but you can keep GlowButton if you prefer. I've used a custom one here.
 import './ContactSection.css';
 
 const ContactSection = () => {
@@ -15,12 +16,9 @@ const ContactSection = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [submitStatus, setSubmitStatus] = useState(null);
 
-  // 1. Safe URL definition
-  // This prevents "undefined/api/contact" errors if the env var is missing
   const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-  // const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,8 +34,6 @@ const ContactSection = () => {
     setSubmitStatus(null);
     
     try {
-      // 2. Format the message cleanly
-      // We strip extra indentation so it looks good in the email
       const structuredMessage = `
 Company: ${formData.company || 'N/A'}
 Service: ${formData.service || 'N/A'}
@@ -48,13 +44,11 @@ ${formData.message}
 
       const res = await fetch(`${backendBaseUrl}/api/contact`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          message: structuredMessage // Sending the combined string
+          message: structuredMessage
         })
       });
 
@@ -62,7 +56,6 @@ ${formData.message}
 
       if (res.ok && data.success) {
         setSubmitStatus('success');
-        // Clear form on success
         setFormData({
           name: '',
           email: '',
@@ -71,7 +64,6 @@ ${formData.message}
           message: ''
         });
       } else {
-        console.error('Server Error:', data.error);
         setSubmitStatus('error');
       }
     } catch (error) {
@@ -79,242 +71,166 @@ ${formData.message}
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
-      // clear status message after 5 seconds
       setTimeout(() => setSubmitStatus(null), 5000);
     }
   };
 
   const services = [
-    'Video Editing',
     'Web Development',
-    'Graphic Design',
+    'Video Production',
+    'UI/UX Design',
+    'Brand Identity',
+    'SEO & Marketing',
     'Consultation',
-    'Social Media',
-    'SEO',
-    'Web Design',
-    'Web Hosting',
-    'Web Maintenance',
   ];
 
-  const contactInfo = [
-    {
-      icon: '📧',
-      title: 'Email',
-      value: 'scenoxis@gmail.com',
-      description: 'Send us an email anytime'
-    },
-    {
-      icon: '📱',
-      title: 'Phone',
-      value: '+91 62660 89196',
-      description: 'Call us during business hours'
-    },
-    {
-      icon: '📍',
-      title: 'Location',
-      value: 'PHAGWARA, PUNJAB',
-      description: 'Visit our creative studio'
-    }
+  const contactDetails = [
+    { label: 'Email', value: 'scenoxis@gmail.com', href: 'mailto:scenoxis@gmail.com' },
+    { label: 'Phone', value: '+91 62660 89196', href: 'tel:+916266089196' },
+    { label: 'Location', value: 'Punjab, India', href: '#' },
   ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.6, ease: 'easeOut' }
-    }
-  };
 
   return (
     <section id="contact" className="contact-section">
-      <BackgroundEffects type="particles" intensity="medium" />
+      {/* Background Ambient Glow */}
+      <div className="contact-bg-glow"></div>
       
-      <div className="contact-section__container">
-        <motion.div
-          className="contact-section__header"
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="contact-section__title">Get In Touch</h2>
-          <p className="contact-section__subtitle">
-            Ready to start your next project? Let's discuss how we can bring your vision to life.
-          </p>
-        </motion.div>
-
-        <div className="contact-section__content">
-          <motion.div
-            className="contact-section__info"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
+      <div className="contact-container">
+        
+        <div className="contact-grid">
+          {/* LEFT SIDE: Typography & Info */}
+          <motion.div 
+            className="contact-left"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
-            <h3 className="contact-section__info-title">Let's Connect</h3>
-            <p className="contact-section__info-description">
-              We're always excited to hear about new projects and opportunities. 
-              Reach out to us and let's create something amazing together.
-            </p>
-            
-            <div className="contact-section__info-items">
-              {contactInfo.map((info, index) => (
-                <motion.div
-                  key={index}
-                  className="contact-section__info-item"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-                >
-                  <div className="contact-section__info-icon">
-                    {info.icon}
-                  </div>
-                  <div className="contact-section__info-content">
-                    <h4 className="contact-section__info-item-title">
-                      {info.title}
-                    </h4>
-                    <p className="contact-section__info-item-value">
-                      {info.value}
-                    </p>
-                    <p className="contact-section__info-item-description">
-                      {info.description}
-                    </p>
-                  </div>
-                </motion.div>
+            <div className="contact-header">
+              <span className="contact-label">Start a Project</span>
+              <h2 className="contact-heading">
+                Let’s build <br />
+                the <span className="text-outline">future.</span>
+              </h2>
+            </div>
+
+            <div className="contact-info-list">
+              {contactDetails.map((item, index) => (
+                <div key={index} className="contact-info-item">
+                  <span className="info-label">{item.label}</span>
+                  <a href={item.href} className="info-value">{item.value}</a>
+                </div>
               ))}
+            </div>
+
+            <div className="contact-socials">
+               {/* Example Social Icons */}
+               <a href="#" className="social-link">LinkedIn</a>
+               <a href="#" className="social-link">Instagram</a>
+               <a href="#" className="social-link">Twitter</a>
             </div>
           </motion.div>
 
-          <motion.div
-            className="contact-section__form-container"
-            initial={{ x: 50, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
+          {/* RIGHT SIDE: The Interface Form */}
+          <motion.div 
+            className="contact-right"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <form className="contact-section__form" onSubmit={handleSubmit}>
-              <div className="contact-section__form-row">
-                <div className="contact-section__form-group">
-                  <label htmlFor="name" className="contact-section__form-label">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="contact-section__form-input"
-                    required
-                  />
+            <div className="form-card">
+              <div className="form-header">
+                <div className="form-dots">
+                  <span></span><span></span><span></span>
                 </div>
-                
-                <div className="contact-section__form-group">
-                  <label htmlFor="email" className="contact-section__form-label">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="contact-section__form-input"
-                    required
-                  />
-                </div>
+                <div className="form-title">New Message</div>
               </div>
 
-              <div className="contact-section__form-row">
-                <div className="contact-section__form-group">
-                  <label htmlFor="company" className="contact-section__form-label">
-                    Company
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleInputChange}
-                    className="contact-section__form-input"
-                  />
+              <form className="modern-form" onSubmit={handleSubmit}>
+                <div className="form-row">
+                  <div className="input-group">
+                    <label>Your Name</label>
+                    <input 
+                      type="text" 
+                      name="name" 
+                      value={formData.name} 
+                      onChange={handleInputChange} 
+                      placeholder="Your Name"
+                      required 
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      value={formData.email} 
+                      onChange={handleInputChange} 
+                      placeholder="Scenoxis123@gmail.com"
+                      required 
+                    />
+                  </div>
                 </div>
-                
-                <div className="contact-section__form-group">
-                  <label htmlFor="service" className="contact-section__form-label">
-                    Service Interest
-                  </label>
-                  <select
-                    id="service"
-                    name="service"
-                    value={formData.service}
-                    onChange={handleInputChange}
-                    className="contact-section__form-select"
+
+                <div className="form-row">
+                  <div className="input-group">
+                    <label>Company (Optional)</label>
+                    <input 
+                      type="text" 
+                      name="company" 
+                      value={formData.company} 
+                      onChange={handleInputChange} 
+                      placeholder="Agency Ltd."
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Service</label>
+                    <select 
+                      name="service" 
+                      value={formData.service} 
+                      onChange={handleInputChange}
+                      className="modern-select"
+                    >
+                      <option value="">Select a Service</option>
+                      {services.map((s, i) => (
+                        <option key={i} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="input-group">
+                  <label>Tell us about your project</label>
+                  <textarea 
+                    name="message" 
+                    value={formData.message} 
+                    onChange={handleInputChange} 
+                    rows="4" 
+                    placeholder="Tell us a brief about Project goals, timeframe, budget we will get in touch..."
+                    required
+                  ></textarea>
+                </div>
+
+                <div className="form-footer">
+                  <button 
+                    type="submit" 
+                    className={`submit-btn ${isSubmitting ? 'loading' : ''} ${submitStatus}`}
+                    disabled={isSubmitting}
                   >
-                    <option value="">Select a service</option>
-                    {services.map((service, index) => (
-                      <option key={index} value={service}>
-                        {service}
-                      </option>
-                    ))}
-                  </select>
+                    {isSubmitting ? (
+                      <span className="btn-content">Sending...</span>
+                    ) : submitStatus === 'success' ? (
+                      <span className="btn-content">Message Sent ✓</span>
+                    ) : submitStatus === 'error' ? (
+                      <span className="btn-content">Try Again ✕</span>
+                    ) : (
+                      <span className="btn-content">Send Message &rarr;</span>
+                    )}
+                  </button>
                 </div>
-              </div>
-
-              <div className="contact-section__form-group">
-                <label htmlFor="message" className="contact-section__form-label">
-                  Project Details *
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  className="contact-section__form-textarea"
-                  rows="5"
-                  placeholder="Tell us about your project, goals, and any specific requirements..."
-                  required
-                />
-              </div>
-
-              <GlowButton
-                type="submit"
-                variant="primary"
-                size="lg"
-                className="contact-section__form-submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </GlowButton>
-
-              {submitStatus === 'success' && (
-                <motion.div
-                  className="contact-section__success"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  ✅ Message sent successfully! We'll get back to you soon.
-                </motion.div>
-              )}
-
-              {submitStatus === 'error' && (
-                <motion.div
-                  className="contact-section__error"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  ❌ Something went wrong. Please try again.
-                </motion.div>
-              )}
-            </form>
+              </form>
+            </div>
           </motion.div>
         </div>
       </div>

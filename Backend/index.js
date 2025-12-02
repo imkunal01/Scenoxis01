@@ -14,7 +14,7 @@ const allowedOrigins = [
   "https://scenoxis01.vercel.app",
   "https://scenoxis01-1.onrender.com",
   "http://localhost:5173",
-  "http://localhost:5174" // Fixed the double comma error here
+  "http://localhost:5174" 
 ];
 
 app.use(cors({
