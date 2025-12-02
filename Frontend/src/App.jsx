@@ -58,7 +58,7 @@ function App() {
         />
         <main>
           <HeroSection />
-          <ServicesSection />
+          {/* <ServicesSection /> */}
           <PortfolioSection />
           <ContactSection />
           <TestimonialsSection />

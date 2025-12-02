@@ -15,7 +15,12 @@ const ContactSection = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+
+  // 1. Safe URL definition
+  // This prevents "undefined/api/contact" errors if the env var is missing
+  const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  // const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,29 +30,39 @@ const ContactSection = () => {
     }));
   };
 
-  // 🧠 UPDATED handleSubmit with backend + mailer integration
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus(null);
     
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/contact` || 'http://localhost:5000/api/contact', {
+      // 2. Format the message cleanly
+      // We strip extra indentation so it looks good in the email
+      const structuredMessage = `
+Company: ${formData.company || 'N/A'}
+Service: ${formData.service || 'N/A'}
+
+Project Details:
+${formData.message}
+      `.trim();
+
+      const res = await fetch(`${backendBaseUrl}/api/contact`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          message: `
-            Company: ${formData.company || 'N/A'}
-            Service: ${formData.service || 'N/A'}
-            Project Details: ${formData.message}
-          `
+          message: structuredMessage // Sending the combined string
         })
       });
 
       const data = await res.json();
+
       if (res.ok && data.success) {
         setSubmitStatus('success');
+        // Clear form on success
         setFormData({
           name: '',
           email: '',
@@ -56,13 +71,15 @@ const ContactSection = () => {
           message: ''
         });
       } else {
+        console.error('Server Error:', data.error);
         setSubmitStatus('error');
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Network Error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
+      // clear status message after 5 seconds
       setTimeout(() => setSubmitStatus(null), 5000);
     }
   };
@@ -75,11 +92,10 @@ const ContactSection = () => {
     'Social Media',
     'SEO',
     'Web Design',
-    'Web Development',
     'Web Hosting',
     'Web Maintenance',
-    'Web Hosting',
   ];
+
   const contactInfo = [
     {
       icon: '📧',
@@ -90,7 +106,7 @@ const ContactSection = () => {
     {
       icon: '📱',
       title: 'Phone',
-      value: '*916266089196',
+      value: '+91 62660 89196',
       description: 'Call us during business hours'
     },
     {
@@ -105,9 +121,7 @@ const ContactSection = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
+      transition: { staggerChildren: 0.2 }
     }
   };
 
@@ -116,10 +130,7 @@ const ContactSection = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: 'easeOut'
-      }
+      transition: { duration: 0.6, ease: 'easeOut' }
     }
   };
 
@@ -161,10 +172,7 @@ const ContactSection = () => {
                   key={index}
                   className="contact-section__info-item"
                   variants={itemVariants}
-                  whileHover={{ 
-                    scale: 1.05,
-                    transition: { duration: 0.3 }
-                  }}
+                  whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
                 >
                   <div className="contact-section__info-icon">
                     {info.icon}
