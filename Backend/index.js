@@ -8,9 +8,9 @@ const app = express();
 
 // CORS config
 const allowedOrigins = [
-  "https://scenoxis01-1.onrender.com",
+  "https://scenoxis01.vercel.app/",
+  "https://scenoxis.onrender.com",
   "0.0.0.0/0",
-  "https://scenoxis01.vercel.app",
   "http://localhost:5173",
   "http://localhost:5174",
 ];
@@ -32,5 +32,5 @@ connectDB();
 // Routes
 app.use("/api", contactRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;  
 app.listen(PORT, () => console.log(`🚀 Server running on ${PORT}`));
