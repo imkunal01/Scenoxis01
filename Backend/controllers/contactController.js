@@ -10,6 +10,22 @@ const escapeHtml = (unsafe = "") => unsafe
   .replace(/"/g, "&quot;")
   .replace(/'/g, "&#039;");
 
+const sendWithRetry = async (mail, attempts = 2) => {
+  let lastError;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await transporter.sendMail(mail);
+    } catch (err) {
+      lastError = err;
+      const msg = (err && err.message) || "";
+      const transient = /ETIMEDOUT|ECONNRESET|EAI_AGAIN|ESOCKET|ECONNREFUSED/i.test(msg);
+      if (!transient || i === attempts - 1) break;
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+  }
+  throw lastError;
+};
+
 // 🎨 THEME CONFIGURATION (Riot/Valorant Style)
 const theme = {
   bg: "#0f1923",         // Deep dark blue-grey
@@ -204,11 +220,8 @@ exports.submitContact = async (req, res) => {
       html: getUserEmailTemplate(name, formattedMessage),
     };
 
-    // Send
-    const [ownerSend, userSend] = await Promise.all([
-      transporter.sendMail(ownerMail),
-      transporter.sendMail(userMail)
-    ]);
+    const ownerSend = await sendWithRetry(ownerMail);
+    const userSend = await sendWithRetry(userMail);
 
     logger.info(`Owner mail sent | ID: ${ownerSend.messageId}`);
     logger.info(`User mail sent | ID: ${userSend.messageId}`);
@@ -224,16 +237,45 @@ exports.submitContact = async (req, res) => {
   }
 };
 
+const dns = require("dns");
+const net = require("net");
+
+const checkSmtpConnectivity = async () => {
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const port = Number(process.env.SMTP_PORT || 465);
+  try {
+    await new Promise((resolve, reject) => {
+      dns.lookup(host, (err, address) => {
+        if (err) return reject(err);
+        const socket = net.connect({ host: address, port, timeout: 8000 }, () => {
+          socket.end();
+          resolve(true);
+        });
+        socket.on("error", reject);
+        socket.on("timeout", () => {
+          socket.destroy();
+          reject(new Error("SMTP port timeout"));
+        });
+      });
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 exports.health = async (req, res) => {
   try {
     const smtpOk = await transporter.verify().then(() => true).catch(() => false);
-    const dbState = mongoose.connection.readyState; // 0 = disconnected, 1 = connected
+    const smtpPortOk = await checkSmtpConnectivity();
+    const dbState = mongoose.connection.readyState;
     const requiredEnv = ["MONGO_URI", "OWNER_EMAIL", "OWNER_PASS"];
     const envMissing = requiredEnv.filter((k) => !process.env[k]);
 
     return res.json({
-      ok: smtpOk && dbState === 1 && envMissing.length === 0,
+      ok: smtpOk && smtpPortOk && dbState === 1 && envMissing.length === 0,
       smtp: smtpOk,
+      smtpPort: smtpPortOk,
       db: dbState === 1 ? "connected" : "disconnected",
       envMissing,
     });
@@ -251,7 +293,7 @@ exports.testEmail = async (req, res) => {
       subject: "SMTP Test",
       text: "This is a test email from Scenox backend.",
     };
-    const sent = await transporter.sendMail(mail);
+    const sent = await sendWithRetry(mail);
     logger.info(`Test mail sent | ID: ${sent.messageId}`);
     return res.json({ success: true, messageId: sent.messageId });
   } catch (err) {
