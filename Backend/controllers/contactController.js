@@ -1,6 +1,14 @@
 const Contact = require("../models/contact");
 const transporter = require("../config/mail");
 const logger = require("../config/logger");
+const mongoose = require("mongoose");
+
+const escapeHtml = (unsafe = "") => unsafe
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;")
+  .replace(/'/g, "&#039;");
 
 // 🎨 THEME CONFIGURATION (Riot/Valorant Style)
 const theme = {
@@ -178,7 +186,7 @@ exports.submitContact = async (req, res) => {
     await contact.save();
 
     // Format for HTML
-    const formattedMessage = message.replace(/\n/g, "<br>");
+    const formattedMessage = escapeHtml(message).replace(/\n/g, "<br>");
 
     // Generate Emails
     const ownerMail = {
@@ -213,5 +221,41 @@ exports.submitContact = async (req, res) => {
   } catch (err) {
     logger.error(`Mail sending failed: ${err.message}`);
     res.status(500).json({ error: "Server error", details: err.message });
+  }
+};
+
+exports.health = async (req, res) => {
+  try {
+    const smtpOk = await transporter.verify().then(() => true).catch(() => false);
+    const dbState = mongoose.connection.readyState; // 0 = disconnected, 1 = connected
+    const requiredEnv = ["MONGO_URI", "OWNER_EMAIL", "OWNER_PASS"];
+    const envMissing = requiredEnv.filter((k) => !process.env[k]);
+
+    return res.json({
+      ok: smtpOk && dbState === 1 && envMissing.length === 0,
+      smtp: smtpOk,
+      db: dbState === 1 ? "connected" : "disconnected",
+      envMissing,
+    });
+  } catch (err) {
+    logger.error(`Health check failed: ${err.message}`);
+    res.status(500).json({ error: "Health check failed" });
+  }
+};
+
+exports.testEmail = async (req, res) => {
+  try {
+    const mail = {
+      from: `"Scenox Backend" <${process.env.OWNER_EMAIL}>`,
+      to: process.env.OWNER_EMAIL,
+      subject: "SMTP Test",
+      text: "This is a test email from Scenox backend.",
+    };
+    const sent = await transporter.sendMail(mail);
+    logger.info(`Test mail sent | ID: ${sent.messageId}`);
+    return res.json({ success: true, messageId: sent.messageId });
+  } catch (err) {
+    logger.error(`Test mail failed: ${err.message}`);
+    res.status(500).json({ error: "Test mail failed", details: err.message });
   }
 };

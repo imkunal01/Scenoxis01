@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const contactRoutes = require("./routes/contactRoutes");
+const transporter = require("./config/mail");
+const logger = require("./config/logger");
 
 const app = express();
 
@@ -17,16 +19,28 @@ app.use((req, res, next) => {
 });
 
 // ====================================================================
-// 2. CORS CONFIGURATION (ALLOW ALL)
+// 2. CORS CONFIGURATION (Configurable via ALLOWED_ORIGINS)
 // ====================================================================
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const corsOrigin = allowedOrigins.length
+  ? function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    }
+  : true; // Fallback to allow all in development if not configured
+
 app.use(cors({
-  // "origin: true" means "Allow whatever origin is requesting access".
-  // It effectively reflects the request origin back to the client.
-  // This allows ALL domains while still supporting 'credentials: true'.
-  origin: true, 
+  origin: corsOrigin,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 }));
 
 // ====================================================================
@@ -39,8 +53,22 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
+// Env validation
+const requiredEnv = ["MONGO_URI", "OWNER_EMAIL", "OWNER_PASS"];
+const missing = requiredEnv.filter((k) => !process.env[k]);
+if (missing.length) {
+  logger.error(`Missing required env vars: ${missing.join(", ")}`);
+}
+
 // Connect to Database
 connectDB();
+
+// SMTP Transporter Verification
+transporter.verify().then(() => {
+  logger.info("✅ Email server is ready to send messages");
+}).catch((err) => {
+  logger.error(`❌ SMTP verification failed: ${err.message}`);
+});
 
 // API Routes
 app.use("/api", contactRoutes);

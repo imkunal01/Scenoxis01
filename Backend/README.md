@@ -2,13 +2,14 @@ Backend Service (Scenox)
 
 Overview
 - Express server with MongoDB and Nodemailer (Gmail SMTP).
-- Exposes `POST /api/contact` and `GET /api/test-email`.
+- Exposes `POST /api/contact`, `GET /api/test-email`, and `GET /api/health`.
 
 Environment Variables
 - `MONGO_URI`: MongoDB connection string.
 - `PORT`: Port to run the server (Render sets this automatically).
 - `OWNER_EMAIL`: Gmail address used to send and receive emails.
 - `OWNER_PASS`: Gmail App Password (16 characters, no spaces).
+- `ALLOWED_ORIGINS`: Comma-separated list of allowed origins for CORS (production).
 
 Gmail Setup
 - Enable 2-Step Verification on the Gmail account.
@@ -19,7 +20,7 @@ Gmail Setup
 
 Render Deployment Checklist
 - Add environment variables in Render Dashboard ➜ Environment:
-  - `MONGO_URI`, `OWNER_EMAIL`, `OWNER_PASS` (no spaces), optionally `PORT`.
+  - `MONGO_URI`, `OWNER_EMAIL`, `OWNER_PASS` (no spaces), optionally `PORT`, and `ALLOWED_ORIGINS`.
 - Redeploy after changes.
 - Check logs for transporter verification:
   - Success: `✅ Email server is ready to send messages`
@@ -27,13 +28,14 @@ Render Deployment Checklist
 
 Vercel Frontend Configuration
 - Set `VITE_BACKEND_URL` to your Render URL (e.g., `https://<service>.onrender.com`).
-- Ensure the backend CORS `allowedOrigins` includes your Vercel domain.
+- Ensure the backend CORS `ALLOWED_ORIGINS` includes your Vercel domain.
 
 Testing
+- Call `GET /api/health` to validate environment and connectivity (SMTP, DB, env vars).
 - Call `GET /api/test-email` on the backend to validate SMTP.
 - Submit the contact form to verify both owner and user emails.
 
 Troubleshooting
 - 535 Invalid login: Verify `OWNER_EMAIL` and `OWNER_PASS` (no spaces) and App Password exists.
 - ETIMEDOUT / ECONNRESET: Temporary network issues; retry or check Render status.
-- CORS errors: Ensure frontend origin is listed in backend `allowedOrigins`.
+- CORS errors: Ensure frontend origin is included in `ALLOWED_ORIGINS`.
