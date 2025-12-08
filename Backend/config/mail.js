@@ -1,24 +1,41 @@
-const nodemailer = require("nodemailer");
+import nodemailer from 'nodemailer'
+import logger from './logger.js'
 
-const host = process.env.SMTP_HOST || "smtp.gmail.com";
-const port = Number(process.env.SMTP_PORT || 465);
-const secure = (process.env.SMTP_SECURE || "").toLowerCase() === "true" ? true : port === 465;
+const host = process.env.MAILGUN_HOST || process.env.SMTP_HOST || 'smtp.gmail.com'
+const port = process.env.MAILGUN_PORT
+  ? parseInt(process.env.MAILGUN_PORT, 10)
+  : process.env.SMTP_PORT
+  ? parseInt(process.env.SMTP_PORT, 10)
+  : 465
+const user = process.env.MAILGUN_USER || process.env.SMTP_USER || process.env.OWNER_EMAIL
+const pass = process.env.MAILGUN_PASS || process.env.SMTP_PASS || process.env.OWNER_PASS
+
+const secureEnv = process.env.SMTP_SECURE
+const secure = typeof secureEnv === 'string' ? secureEnv.toLowerCase() === 'true' : port === 465
 
 const transporter = nodemailer.createTransport({
   host,
   port,
   secure,
-  auth: {
-    user: process.env.OWNER_EMAIL,
-    pass: (process.env.OWNER_PASS || "").replace(/\s+/g, "")
-  },
+  auth: user && pass ? { user, pass } : undefined,
   requireTLS: true,
-  connectionTimeout: Number(process.env.SMTP_CONN_TIMEOUT || 15000),
-  socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT || 15000),
-  greetingTimeout: Number(process.env.SMTP_GREET_TIMEOUT || 15000),
-  pool: true,
-  maxConnections: Number(process.env.SMTP_MAX_CONNECTIONS || 2),
-  maxMessages: Number(process.env.SMTP_MAX_MESSAGES || 50)
-});
+  connectionTimeout: process.env.SMTP_CONN_TIMEOUT ? parseInt(process.env.SMTP_CONN_TIMEOUT, 10) : 15000,
+  socketTimeout: process.env.SMTP_SOCKET_TIMEOUT ? parseInt(process.env.SMTP_SOCKET_TIMEOUT, 10) : 15000,
+  greetingTimeout: process.env.SMTP_GREET_TIMEOUT ? parseInt(process.env.SMTP_GREET_TIMEOUT, 10) : 15000,
+})
 
-module.exports = transporter;
+logger.info('Mail transporter config', {
+  host: host || null,
+  port: port || null,
+  secure,
+  authUser: user || null,
+})
+
+try {
+  await transporter.verify()
+  logger.info('Mail transporter verified')
+} catch (e) {
+  logger.error('Mail transporter verification failed', { message: e?.message })
+}
+
+export default transporter

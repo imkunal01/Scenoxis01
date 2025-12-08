@@ -18,9 +18,9 @@ const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
 
-  // const backendBaseUrl =  'http://localhost:5000';
+  const backendBaseUrl =  'http://localhost:5000';
 
-  const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  // const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -1,4 +1,6 @@
 import React from 'react';
+import AdminLogin from './admin/AdminLogin';
+import AdminForms from './admin/AdminForms';
 import { ThemeProvider } from './contexts/ThemeContext';
 import CardNav from './components/CardNav';
 import logo from './assets/logo2.png';
@@ -15,6 +17,17 @@ import CursorGlow from './components/CursorGlow';
 import './styles/global.css';
 
 function App() {
+  const path = typeof window !== 'undefined' ? window.location.pathname : '/'
+  const isAdmin = path.startsWith('/admin')
+  if (isAdmin) {
+    if (path === '/admin' || path === '/admin/') {
+      return <AdminLogin />
+    }
+    if (path.startsWith('/admin/forms')) {
+      return <AdminForms />
+    }
+    return <AdminLogin />
+  }
   const items = [
     {
       label: "About",
